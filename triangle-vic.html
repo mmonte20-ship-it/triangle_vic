@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El triangle de Vic</title>
+<style>
+  :root{
+    --map-w: 700px;
+    --border: #cfcfcf;
+    --red: #c62828;
+    --blue: #1565c0;
+  }
+  body{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    background:#f3f3f3;
+    margin: 0;
+    padding: 24px 12px 40px;
+    color:#111;
+  }
+  h1{
+    margin: 0 0 12px;
+    font-size: 2.2rem;
+  }
+  #question{
+    font-size: 1.5rem;
+    margin: 0 0 16px;
+  }
+  #mapWrap{
+    position: relative;
+    display: inline-block;
+    width: min(var(--map-w), 92vw);
+    line-height: 0;
+    background: white;
+    padding: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  #mapImg{
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  #overlay{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+  }
+  .zone{
+    fill: rgba(198,40,40,0.10);
+    stroke: rgba(198,40,40,0.88);
+    stroke-width: 4;
+    cursor:pointer;
+    transition: fill 0.15s ease;
+  }
+  .zone:hover{
+    fill: rgba(198,40,40,0.22);
+  }
+  .zone.selected{
+    fill: rgba(21,101,192,0.38);
+    stroke: rgba(21,101,192,0.95);
+  }
+  .zone-label{
+    font-size: 38px;
+    font-weight: 700;
+    fill: rgba(0,0,0,0.7);
+    pointer-events: none;
+  }
+  .zone-label-bg{
+    fill: rgba(255,255,255,0.85);
+    pointer-events: none;
+  }
+  .controls{
+    margin: 18px 0 22px;
+  }
+  button{
+    font-size: 1rem;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid #999;
+    background: white;
+    cursor: pointer;
+  }
+  button:hover{ background:#fafafa; }
+  #results{
+    max-width: 480px;
+    margin: 0 auto;
+    text-align: left;
+    line-height: 1.5;
+    font-size: 1.05rem;
+  }
+  .hidden{ display:none; }
+</style>
+</head>
+<body>
+
+<h1>El triangle de Vic</h1>
+<p id="question"></p>
+
+<div id="mapWrap">
+  <img id="mapImg" src="mapa_punts.jpg" alt="Mapa de Vic">
+  <svg id="overlay" viewBox="0 0 1447 2048" preserveAspectRatio="none">
+
+    <polygon class="zone" data-zone="1" points="49,151 670,441 1386,151"></polygon>
+    <polygon class="zone" data-zone="2" points="49,151 364,393 239,785"></polygon>
+    <polygon class="zone" data-zone="3" points="49,151 364,393 670,441"></polygon>
+    <polygon class="zone" data-zone="4" points="670,441 966,589 1386,151"></polygon>
+    <polygon class="zone" data-zone="5" points="364,393 239,785 686,852"></polygon>
+    <polygon class="zone" data-zone="6" points="364,393 670,441 686,852"></polygon>
+    <polygon class="zone" data-zone="7" points="670,441 966,589 686,852"></polygon>
+    <polygon class="zone" data-zone="8" points="966,589 1386,151 1125,1043"></polygon>
+    <polygon class="zone" data-zone="9" points="49,151 239,785 49,1805"></polygon>
+    <polygon class="zone" data-zone="10" points="686,852 966,589 1125,1043"></polygon>
+    <polygon class="zone" data-zone="11" points="239,785 686,852 49,1805"></polygon>
+    <polygon class="zone" data-zone="12" points="686,852 1125,1043 839,1594"></polygon>
+    <polygon class="zone" data-zone="13" points="686,852 49,1805 839,1594"></polygon>
+    <polygon class="zone" data-zone="14" points="839,1594 1125,1043 1386,1805"></polygon>
+    <polygon class="zone" data-zone="15" points="49,1805 839,1594 1386,1805"></polygon>
+    <polygon class="zone" data-zone="16" points="1125,1043 1386,151 1386,1805"></polygon>
+
+    <!-- labels -->
+    <rect class="zone-label-bg" x="650" y="195" width="102" height="60" rx="10"></rect><text class="zone-label" x="701" y="239" text-anchor="middle">1</text>
+    <rect class="zone-label-bg" x="166" y="390" width="102" height="60" rx="10"></rect><text class="zone-label" x="217" y="434" text-anchor="middle">2</text>
+    <rect class="zone-label-bg" x="310" y="275" width="102" height="60" rx="10"></rect><text class="zone-label" x="361" y="319" text-anchor="middle">3</text>
+    <rect class="zone-label-bg" x="956" y="340" width="102" height="60" rx="10"></rect><text class="zone-label" x="1007" y="384" text-anchor="middle">4</text>
+    <rect class="zone-label-bg" x="379" y="623" width="102" height="60" rx="10"></rect><text class="zone-label" x="430" y="667" text-anchor="middle">5</text>
+    <rect class="zone-label-bg" x="522" y="508" width="102" height="60" rx="10"></rect><text class="zone-label" x="573" y="552" text-anchor="middle">6</text>
+    <rect class="zone-label-bg" x="723" y="573" width="102" height="60" rx="10"></rect><text class="zone-label" x="774" y="617" text-anchor="middle">7</text>
+    <rect class="zone-label-bg" x="1108" y="540" width="102" height="60" rx="10"></rect><text class="zone-label" x="1159" y="584" text-anchor="middle">8</text>
+    <rect class="zone-label-bg" x="61" y="860" width="102" height="60" rx="10"></rect><text class="zone-label" x="112" y="904" text-anchor="middle">9</text>
+    <rect class="zone-label-bg" x="875" y="774" width="122" height="60" rx="10"></rect><text class="zone-label" x="936" y="818" text-anchor="middle">10</text>
+    <rect class="zone-label-bg" x="274" y="1093" width="122" height="60" rx="10"></rect><text class="zone-label" x="335" y="1137" text-anchor="middle">11</text>
+    <rect class="zone-label-bg" x="832" y="1109" width="122" height="60" rx="10"></rect><text class="zone-label" x="893" y="1153" text-anchor="middle">12</text>
+    <rect class="zone-label-bg" x="474" y="1363" width="122" height="60" rx="10"></rect><text class="zone-label" x="535" y="1407" text-anchor="middle">13</text>
+    <rect class="zone-label-bg" x="1066" y="1427" width="122" height="60" rx="10"></rect><text class="zone-label" x="1127" y="1471" text-anchor="middle">14</text>
+    <rect class="zone-label-bg" x="697" y="1681" width="122" height="60" rx="10"></rect><text class="zone-label" x="758" y="1725" text-anchor="middle">15</text>
+    <rect class="zone-label-bg" x="1238" y="946" width="122" height="60" rx="10"></rect><text class="zone-label" x="1299" y="990" text-anchor="middle">16</text>
+  </svg>
+</div>
+
+<div class="controls">
+  <button id="nextBtn">Següent</button>
+  <button id="restartBtn" class="hidden">Tornar a començar</button>
+</div>
+
+<h2>Resultats</h2>
+<div id="results">Encara no hi ha resultats.</div>
+
+<script>
+const questions = [
+  "On passes més temps?",
+  "On coneixes més gent?",
+  "On hi ha més vida?",
+  "On t'agrada més estar-hi?",
+  "On has viscut algun moment divertit?"
+];
+
+const questionEl = document.getElementById("question");
+const resultsEl = document.getElementById("results");
+const nextBtn = document.getElementById("nextBtn");
+const restartBtn = document.getElementById("restartBtn");
+const zones = [...document.querySelectorAll(".zone")];
+
+let step = 0;
+let answers = new Array(questions.length).fill(null);
+
+function updateQuestion() {
+  questionEl.textContent = step < questions.length ? questions[step] : "Resultats finals";
+}
+
+function clearSelection() {
+  zones.forEach(z => z.classList.remove("selected"));
+}
+
+function paintCurrentSelection() {
+  clearSelection();
+  const current = answers[step];
+  if (current !== null) {
+    const zone = document.querySelector(`.zone[data-zone="${current}"]`);
+    if (zone) zone.classList.add("selected");
+  }
+}
+
+zones.forEach(zone => {
+  zone.addEventListener("click", () => {
+    answers[step] = Number(zone.dataset.zone);
+    paintCurrentSelection();
+  });
+});
+
+nextBtn.addEventListener("click", () => {
+  if (step >= questions.length) return;
+  if (answers[step] === null) {
+    alert("Tria una zona.");
+    return;
+  }
+  step += 1;
+  if (step < questions.length) {
+    updateQuestion();
+    paintCurrentSelection();
+  } else {
+    showResults();
+    clearSelection();
+    nextBtn.classList.add("hidden");
+    restartBtn.classList.remove("hidden");
+  }
+});
+
+restartBtn.addEventListener("click", () => {
+  step = 0;
+  answers = new Array(questions.length).fill(null);
+  resultsEl.innerHTML = "Encara no hi ha resultats.";
+  nextBtn.classList.remove("hidden");
+  restartBtn.classList.add("hidden");
+  updateQuestion();
+  clearSelection();
+});
+
+function showResults() {
+  const counts = {};
+  answers.forEach(z => {
+    counts[z] = (counts[z] || 0) + 1;
+  });
+
+  const ordered = Object.entries(counts)
+    .sort((a,b) => b[1] - a[1] || a[0] - b[0]);
+
+  if (!ordered.length) {
+    resultsEl.innerHTML = "Encara no hi ha resultats.";
+    return;
+  }
+
+  resultsEl.innerHTML = ordered
+    .map(([zone, votes]) => `Zona ${zone}: ${votes} vot${votes > 1 ? "s" : ""}`)
+    .join("<br>");
+}
+
+updateQuestion();
+</script>
+
+</body>
+</html>
